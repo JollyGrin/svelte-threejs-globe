@@ -85,7 +85,7 @@
 {/each}
 
 {#each locations as location, i}
-  <Arc startLoc={locations[0]} endLoc={location} />
+  <Arc startLoc={locations[i]} endLoc={locations[i + 1]} />
 {/each}
 
 <!-- <T.Mesh position.x={pos.x} position.y={pos.y} position.z={pos.z}> -->
