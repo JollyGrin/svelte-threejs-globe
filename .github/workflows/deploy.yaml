@@ -2,46 +2,54 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main # Trigger this workflow on pushes to main
+    branches: "main"
 
 jobs:
-  build:
+  build_site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # If you're using pnpm, add this step then change the commands and cache key below to use `pnpm`
+      # - name: Install pnpm
+      #   uses: pnpm/action-setup@v3
+      #   with:
+      #     version: 8
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: build
+        env:
+          BASE_PATH: "/${{ github.event.repository.name }}"
+        run: |
+          npm run build
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "build/"
+
+  deploy:
+    needs: build_site
     runs-on: ubuntu-latest
 
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "16" # Use the version of Node.js you want
-
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: |
-          npm install  # or use 'pnpm install' if you're using pnpm
-
-      # Step 4: Build the Svelte app for production
-      - name: Build the app
-        run: |
-          npm run build  # or 'pnpm build' if you're using pnpn
-
-      # Step 5: Deploy to GitHub Pages (directly to main branch)
-      - name: Deploy to GitHub Pages
-        run: |
-          # Remove any existing files in the root directory (to avoid conflicts)
-          rm -rf $(ls -A | grep -v "static")
-          # Move built files to root directory
-          cp -r static/* ./
-          # Add all changes and commit
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "github-actions@users.noreply.github.com"
-          git add -A
-          git commit -m "Deploy to GitHub Pages"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
