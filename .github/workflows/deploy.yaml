@@ -34,9 +34,9 @@ jobs:
       - name: Deploy to GitHub Pages
         run: |
           # Remove any existing files in the root directory (to avoid conflicts)
-          rm -rf $(ls -A | grep -v "public")
+          rm -rf $(ls -A | grep -v "static")
           # Move built files to root directory
-          cp -r public/* ./
+          cp -r static/* ./
           # Add all changes and commit
           git config --local user.name "GitHub Actions"
           git config --local user.email "github-actions@users.noreply.github.com"
