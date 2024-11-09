@@ -15,14 +15,14 @@
 </script>
 
 <T.Mesh position.x={x} position.y={y} position.z={z}>
-  <T.SphereGeometry args={[0.1, 24, 24]} />
-  <T.MeshStandardMaterial color="red" emissive="red" emissiveIntensity={1} />
+  <T.SphereGeometry args={[0.05, 24, 24]} />
+  <T.MeshStandardMaterial color="teal" emissive="teal" emissiveIntensity={1} />
 </T.Mesh>
 
 <T.PointLight
   color="teal"
-  intensity={10}
-  distance={3}
+  intensity={2}
+  distance={1}
   position.x={x}
   position.y={y}
   position.z={z}

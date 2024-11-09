@@ -4,11 +4,14 @@
   import Earth from "./Earth.svelte";
   import Dot from "./Dot.svelte";
   import { latLongToVector3 } from "$lib/helpers/latlong";
-  import { CatmullRomCurve3, Vector3 } from "three";
+  import { CatmullRomCurve3, Mesh, Vector3 } from "three";
   import { T } from "@threlte/core";
+  import { onMount } from "svelte";
   let globeRadius: number = 5;
 
   const locations = [
+    { lat: 52.3676, lon: 4.9041 }, // Amsterdam
+    { lat: 30.2672, lon: -97.7431 }, // Austin
     { lat: 40.7128, lon: -74.006 }, // New York
     { lat: 51.5074, lon: -0.1278 }, // London
     { lat: 48.8566, lon: 2.3522 }, // Paris
@@ -35,11 +38,31 @@
   const end = latLongToVector3(locations[1].lat, locations[1].lon, 5);
   const controlPoint = new Vector3(
     (start.x + end.x) / 2,
-    (start.y + end.y) / 2 + 1, // Add some height to make the arc curve
+    (start.y + end.y) / 2 + 2.5, // Add some height to make the arc curve
     (start.z + end.z) / 2,
   );
   const curve = new CatmullRomCurve3([start, controlPoint, end]);
   curve.closed = false;
+
+  let pos: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 }; // Initialize mesh variable
+  let t = 0; // Parameter for interpolation along the curve
+  let speed = 0.005; // Adjust the speed of the animation
+
+  // Animation function to update position along the curve
+  const animate = () => {
+    t += speed; // Increase 't' to move along the curve
+    if (t > 1) t = 0; // Reset to the start when reaching the end
+    const position = curve.getPointAt(t); // Get point at 't' along the curve
+    console.log({ position });
+    if (pos) pos.x = position.x; // Update mesh position
+    if (pos) pos.y = position.y; // Update mesh position
+    if (pos) pos.z = position.z; // Update mesh position
+    requestAnimationFrame(animate); // Call the animate function recursively
+  };
+
+  onMount(() => {
+    animate(); // Start animation when the component mounts
+  });
 </script>
 
 <Lights />
@@ -50,7 +73,20 @@
   <Dot {location} />
 {/each}
 
+<T.Mesh position.x={pos.x} position.y={pos.y} position.z={pos.z}>
+  <T.SphereGeometry args={[0.025]} />
+  <T.MeshBasicMaterial color="teal" />
+</T.Mesh>
+<T.PointLight
+  color="teal"
+  intensity={2}
+  distance={1}
+  position.x={pos.x}
+  position.y={pos.y}
+  position.z={pos.z}
+/>
+
 <T.Mesh>
   <T.TubeGeometry args={[curve, 124, 0.01]} />
-  <T.MeshBasicMaterial color="white" />
+  <T.MeshBasicMaterial color="white" transparent={true} opacity={0.05} />
 </T.Mesh>
