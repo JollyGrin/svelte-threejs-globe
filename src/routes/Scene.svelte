@@ -37,50 +37,6 @@
     { lat: 37.9838, lon: 23.7275 }, // Athens
   ];
 
-  // Create arc geometry (Path between two locations)
-  function createArc(
-    from: { lat: number; lon: number },
-    to: { lat: number; lon: number },
-    radius: number,
-  ) {
-    const start = latLongToVector3(from.lat, from.lon, radius);
-    const end = latLongToVector3(to.lat, to.lon, radius);
-
-    // Create a curve path between two points
-    const controlPoint = new Vector3(
-      (start.x + end.x) / 2,
-      (start.y + end.y) / 2 + 1, // Add some height to make the arc curve
-      (start.z + end.z) / 2,
-    );
-
-    // Use a CatmullRomCurve to create a smooth arc
-    const curve = new CatmullRomCurve3([start, controlPoint, end]);
-
-    // Make sure the curve is closed and has the necessary methods
-    curve.closed = false;
-
-    // Create TubeGeometry along the curve path
-    const tubeGeometry = new TubeGeometry(curve, 64, 0.2, 8, false);
-    const material = new MeshBasicMaterial({ color: "white" });
-
-    // Return geometry and material for use in Threlte Mesh
-    return { tubeGeometry, material };
-  }
-
-  // Create arcs between the first location and the other locations
-  let arcs: { tubeGeometry: TubeGeometry; material: MeshBasicMaterial }[] = [];
-
-  onMount(() => {
-    arcs = [
-      createArc(locations[0], locations[1], globeRadius),
-      createArc(locations[0], locations[2], globeRadius),
-    ];
-    // arcs.push(createArc(locations[0], locations[1], globeRadius));
-    // arcs.push(createArc(locations[0], locations[2], globeRadius));
-
-    console.log({ arcs });
-  });
-
   const start = latLongToVector3(locations[0].lat, locations[0].lon, 5);
   const end = latLongToVector3(locations[1].lat, locations[1].lon, 5);
   const controlPoint = new Vector3(
