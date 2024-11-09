@@ -4,14 +4,8 @@
   import Earth from "./Earth.svelte";
   import Dot from "./Dot.svelte";
   import { latLongToVector3 } from "$lib/helpers/latlong";
-  import {
-    CatmullRomCurve3,
-    MeshBasicMaterial,
-    TubeGeometry,
-    Vector3,
-  } from "three";
+  import { CatmullRomCurve3, Vector3 } from "three";
   import { T } from "@threlte/core";
-  import { onMount } from "svelte";
   let globeRadius: number = 5;
 
   const locations = [
