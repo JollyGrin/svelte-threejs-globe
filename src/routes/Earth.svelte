@@ -4,8 +4,7 @@
   import { onMount } from "svelte";
 
   export let globeRadius: number;
-  export const basePath =
-    import.meta.env.MODE === "production" ? "/svelte-threejs-globe" : "";
+  export const basePath = import.meta.env.MODE === "production" ? "" : "";
 
   let earthTexture: THREE.Texture | null = null;
 
