@@ -3,7 +3,10 @@
   import Scene from "./Scene.svelte";
 </script>
 
-<div>
+<div id="container">
+  <div class="absolute z-10">
+    <a href="https://github.com/JollyGrin/svelte-threejs-globe"> git </a>
+  </div>
   <Canvas>
     <Scene />
   </Canvas>
@@ -14,7 +17,8 @@
     margin: 0;
   }
 
-  div {
+  #container {
+    display: relative;
     width: 100vw;
     height: 100vh;
     background: rgb(13, 19, 32);
