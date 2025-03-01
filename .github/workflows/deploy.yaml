@@ -11,25 +11,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # If you're using pnpm, add this step then change the commands and cache key below to use `pnpm`
-      # - name: Install pnpm
-      #   uses: pnpm/action-setup@v3
-      #   with:
-      #     version: 8
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8
+      # Install Bun
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          export PATH="$HOME/.bun/bin:$PATH"
+          echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install dependencies
-        run: pnpm install
-
-      - name: build
+        run: bun install
         env:
-          BASE_PATH: "/${{ github.event.repository.name }}"
+          PATH: ${{ env.PATH }}
+
+      - name: Build
+        env:
+          PUBLIC_BASE_PATH: "/svelte-aframe"
+          PATH: ${{ env.PATH }}
         run: |
-          pnpm run build
+          bun run build
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3
